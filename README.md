@@ -16,7 +16,7 @@
 
 This project presents a structured comparison between:
 
-- Fine-tuned Vision Transformer (ViT) models  
+- Fine-tuned Vision Transformer (ViT) models
 - Zero-shot CLIP (Contrastive Language–Image Pretraining)
 
 on the **Food-101 dataset (101 classes, 101k images)**.
@@ -50,12 +50,12 @@ All models were initialized from ImageNet-21k pretraining and fine-tuned on Food
 ## Zero-Shot Model
 
 ### CLIP (RN50)
+
 - Pretrained multimodal model
 - No fine-tuning performed
 - Evaluated using text prompts for 101 food categories
 
-Official repository:
-https://github.com/openai/CLIP
+Official repository: https://github.com/openai/CLIP
 
 ---
 
@@ -77,7 +77,6 @@ https://github.com/openai/CLIP
 <p align="center">
   <img src="assets/training_curves.png" width="750">
 </p>
-
 <p align="center">
   <em>Figure 1: Training and validation accuracy for ViT Base and SwinV2 during fine-tuning.</em>
 </p>
@@ -95,7 +94,7 @@ Fine-tuning improves performance by ~7–8% over zero-shot CLIP.
 
 # 🔍 Qualitative Analysis: Attention Behavior
 
-Accuracy alone does not explain *why* models succeed or fail.  
+Accuracy alone does not explain *why* models succeed or fail.
 We therefore performed cross-model attention analysis.
 
 ### Cross-Model Correct Predictions
@@ -111,7 +110,6 @@ We therefore performed cross-model attention analysis.
 <p align="center">
   <img src="assets/attention_grid.png" width="850">
 </p>
-
 <p align="center">
   <em>Figure 2: Aggregated attention maps for CLIP, ViT Base, and SwinV2 on the same input image.</em>
 </p>
@@ -126,7 +124,7 @@ Architectural biases become visible:
 
 ## 🔴 Representative Failure Case
 
-**True Label:** hamburger  
+**True Label:** hamburger
 
 | Model | Prediction |
 |--------|------------|
@@ -137,13 +135,71 @@ Architectural biases become visible:
 <p align="center">
   <img src="assets/hamburger_case.png" width="750">
 </p>
-
 <p align="center">
   <em>Figure 3: SwinV2 attends primarily to meat texture, while CLIP captures full sandwich structure.</em>
 </p>
 
-This example highlights how hierarchical windowed attention
-can overweight fine-grained texture, whereas CLIP leverages broader scene context.
+This example highlights how hierarchical windowed attention can overweight fine-grained texture, whereas CLIP leverages broader scene context.
+
+---
+
+## 🟢 SwinV2 Success Case: Prime Rib
+
+**True Label:** prime_rib
+
+| Model | Prediction |
+|--------|------------|
+| CLIP | filet_mignon |
+| ViT Base | sashimi |
+| SwinV2 | prime_rib ✅ |
+
+<p align="center">
+  <img src="assets/FM_ORIGINAL.png" width="400">
+</p>
+<p align="center">
+  <em>Original image: Prime Rib</em>
+</p>
+
+<p align="center">
+  <img src="assets/FM_1.png" width="270">
+  <img src="assets/FM_2.png" width="270">
+  <img src="assets/FM_3.png" width="270">
+</p>
+<p align="center">
+  <em>Attention maps -- CLIP (left), ViT Base (center), SwinV2 (right)</em>
+</p>
+
+CLIP spreads attention broadly across both plates, confusing the main dish with filet mignon. ViT Base focuses narrowly on the central meat but misreads the texture as sashimi. SwinV2's windowed attention captures the local meat-and-jus texture on the plate, correctly identifying prime rib -- a case where fine-grained local reasoning outperforms global strategies.
+
+---
+
+## 🟢 ViT Base Success Case: Eggs Benedict
+
+**True Label:** eggs_benedict
+
+| Model | Prediction |
+|--------|------------|
+| CLIP | crab_cakes |
+| ViT Base | eggs_benedict ✅ |
+| SwinV2 | shrimp_and_grits |
+
+<p align="center">
+  <img src="assets/EB_ORIGINAL.png" width="400">
+</p>
+<p align="center">
+  <em>Original image: Eggs Benedict</em>
+</p>
+
+<p align="center">
+  <img src="assets/EB_1.png" width="270">
+  <img src="assets/EB_2.png" width="270">
+  <img src="assets/EB_3.png" width="270">
+</p>
+<p align="center">
+  <em>Attention maps -- CLIP (left), ViT Base (center), SwinV2 (right)</em>
+</p>
+
+CLIP distributes attention across the entire plate including the side salad and potatoes, missing the defining hollandaise-covered eggs and predicting crab cakes. SwinV2 fixates on local texture patches (the crispy potatoes and greens), predicting shrimp and grits. ViT Base strikes the right balance -- attending to the poached eggs and hollandaise while maintaining enough scene context to correctly identify eggs benedict.
 
 ---
 
@@ -152,8 +208,7 @@ can overweight fine-grained texture, whereas CLIP leverages broader scene contex
 - Fine-tuning significantly improves domain performance.
 - Zero-shot CLIP remains competitive despite no task-specific training.
 - Hierarchical transformers introduce strong local feature bias.
-- Attention visualization reveals structural reasoning differences
-  not captured by scalar accuracy metrics.
+- Attention visualization reveals structural reasoning differences not captured by scalar accuracy metrics.
 
 ---
 
@@ -181,15 +236,18 @@ We performed a detailed cross-model error analysis.
 ## 🧠 Behavioral Observations
 
 ### CLIP
+
 - Strong global semantic reasoning
 - Focuses on overall scene composition
 - More robust to ambiguous local features
 
 ### ViT Base
+
 - Balanced global and object-level focus
 - Best overall performance
 
 ### SwinV2
+
 - Strong local feature sensitivity
 - Windowed attention emphasizes fine details
 
@@ -197,7 +255,7 @@ We performed a detailed cross-model error analysis.
 
 ## Example Failure Case
 
-**True Label:** hamburger  
+**True Label:** hamburger
 
 | Model | Prediction |
 |--------|------------|
@@ -239,8 +297,7 @@ To extract attention maps:
 4. Rescaled heatmaps
 5. Overlayed attention maps onto images
 
-Each model contains 12 attention heads.
-For visualization clarity, heads were aggregated.
+Each model contains 12 attention heads. For visualization clarity, heads were aggregated.
 
 Resources adapted:
 - Transformer-MM-Explainability
@@ -261,6 +318,7 @@ Resources adapted:
 ---
 
 # ⚙️ Dependencies
+
 torch
 torchvision
 transformers
@@ -277,17 +335,16 @@ ftfy
 tensorboard
 git+https://github.com/openai/CLIP.git
 
-
 ---
 
 # 📎 Notebooks
 
 Training & experiments conducted in Google Colab:
 
-- ViT Training  
-- SwinV2 Training  
-- CLIP Evaluation  
-- Attention Visualization  
+- ViT Training
+- SwinV2 Training
+- CLIP Evaluation
+- Attention Visualization
 
 (Links available in repository.)
 
@@ -300,20 +357,21 @@ Training & experiments conducted in Google Colab:
 - Hierarchical transformers (SwinV2) offer strong performance with efficient computation.
 - Attention analysis reveals structural bias differences between global and windowed attention mechanisms.
 
-**Best Model:**  
-`google/vit-base-patch16-224-in21k` — 84.8%
+**Best Model:** `google/vit-base-patch16-224-in21k` — 84.8%
 
 ---
 
 # 👩‍💻 Contributions
 
 ### Elpida Karapepera
+
 - CLIP implementation
 - SwinV2 implementation
 - Cross-model failure analysis
 - Attention visualization engineering
 
 ### Max Ramstad
+
 - ViT Base implementation
 - Dataset bug resolution (grayscale issue)
 - CLIP attention visualization refinement
@@ -327,10 +385,10 @@ Joint:
 
 # 📚 References
 
-- OpenAI CLIP  
-- HuggingFace Transformers  
-- Transformer-MM-Explainability  
-- Facebook Research DINO  
+- OpenAI CLIP
+- HuggingFace Transformers
+- Transformer-MM-Explainability
+- Facebook Research DINO
 
 ---
 
