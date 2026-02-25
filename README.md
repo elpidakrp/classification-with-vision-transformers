@@ -72,26 +72,6 @@ Official repository: https://github.com/openai/CLIP
 
 ---
 
-## 📈 Training Dynamics
-
-<p align="center">
-  <img src="assets/training_curves.png" width="750">
-</p>
-<p align="center">
-  <em>Figure 1: Training and validation accuracy for ViT Base and SwinV2 during fine-tuning.</em>
-</p>
-
-**Observations:**
-
-- Both models converge quickly due to ImageNet pretraining.
-- ViT Base stabilizes slightly higher than SwinV2.
-- Early stopping prevents overfitting in SwinV2.
-- ViT-Large shows unstable early training and high compute cost.
-
-Fine-tuning improves performance by ~7–8% over zero-shot CLIP.
-
----
-
 # 🔍 Qualitative Analysis: Attention Behavior
 
 Accuracy alone does not explain *why* models succeed or fail.
